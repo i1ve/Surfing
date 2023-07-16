@@ -1,0 +1,39 @@
+name: release
+
+on:
+  workflow_dispatch: 
+    inputs:
+      tag_name:
+        description: 'Label Name'
+        required: false
+        default: 'latest'
+      release_notes:
+        description: 'Release Notes'
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run build.sh
+        run: sh build.sh
+
+      - name: Determine Tag Name
+        id: tag
+        run: |
+          if [[ "${{ github.event_name }}" == "push" && "${{ startsWith(github.ref, 'refs/tags/') }}" == "true" ]]; then
+            echo "TAG_NAME=${{ github.ref }}" >> $GITHUB_ENV
+          else
+            echo "TAG_NAME=${{ github.event.inputs.tag_name }}" >> $GITHUB_ENV
+          fi
+
+      - name: Upload Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.TAG_NAME }}
+          files: Surfing_v*_release.zip
+          generate_release_notes: true
+          body: ${{ github.event.inputs.release_notes }}

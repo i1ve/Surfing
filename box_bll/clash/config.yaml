@@ -1,0 +1,187 @@
+mixed-port: 7890
+redir-port: 7891
+tproxy-port: 1536
+allow-lan: true
+mode: Rule
+geodata-mode: true
+unified-delay: true
+log-level: silent
+ipv6: true
+external-controller: 0.0.0.0:9090
+external-ui: ./dashboard/Yacd
+secret: ""
+tcp-concurrent: true
+enable-process: true
+find-process-mode: strict
+global-client-fingerprint: chrome
+
+#####################
+
+#更换节点信息请在浏览器输入 127.0.0.1:9090/ui 请注意大小写.
+#Geo数据库通常一个月更新一次即可，通过Yacd面板设置页.
+#修改配置文件时，建议先停止模块服务，再进行修改配置.
+#注意！如果您的订阅链接中带有“&”字符，请删掉.
+#如果你不知道如何配置，请不要随意修改可能会无法启动，使用默认即可都是最优配置.
+
+#####################
+
+geox-url:
+  geoip: "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat"
+  geosite: "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat"
+
+profile:
+  store-selected: true
+  store-fake-ip: true
+
+sniffer:
+  enable: false
+  sniff:
+    TLS:
+      ports: [443, 8443]
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+
+tun:
+  enable: false
+  device: tun0
+  stack: system
+  dns-hijack:
+    - 'any:53'
+    - 'tcp://any:53'
+  auto-route: true
+  auto-detect-interface: true
+  
+dns:
+  enable: true
+  listen: 0.0.0.0:1053
+  ipv6: true
+  enhanced-mode: fake-ip
+  fake-ip-range: 28.0.0.1/8
+  fake-ip-filter:
+    - '*.lan'
+    - 'connect.rom.miui.com'
+    - 'localhost.ptlogin2.qq.com'
+  nameserver:
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
+
+  p: &p
+    {type: http, interval: 86400, health-check: {enable: true, url: https://www.gstatic.com/generate_204, interval: 300}}
+  u: &u
+    use:
+    - Subscribe1
+    - Subscribe2
+
+proxy-providers:
+  Subscribe1:
+    <<: *p
+    url: "引入订阅链接"
+    path: ./proxy_providers/subscribe1.yaml
+    
+  Subscribe2:
+    <<: *p
+    url: "引入订阅链接"
+    path: ./proxy_providers/subscribe2.yaml
+
+proxy-groups:
+  - {name: 🎯 总模式, type: select, proxies: [🚀 节点选择,♻️ 自动切换,♻️ 手动切换1,♻️ 手动切换2,♻️ 手动切换3,🌎 全球直连]}
+  - {name: 🚀 节点选择, type: select, proxies: [♻️ 自动切换,🌎 全球直连], <<: *u}
+  - {name: ♻️ 自动切换, <<: *u, tolerance: 2, type: url-test}
+  - {name: ♻️ 手动切换1, type: select, proxies: [🚀 节点选择,🌎 全球直连], <<: *u}
+  - {name: ♻️ 手动切换2, type: select, proxies: [🚀 节点选择,🌎 全球直连], <<: *u}
+  - {name: ♻️ 手动切换3, type: select, proxies: [🚀 节点选择,🌎 全球直连], <<: *u}
+  - {name: 🤖 OpenAI, type: select, proxies: [🎯 总模式,♻️ 自动切换,♻️ 手动切换1,♻️ 手动切换2,♻️ 手动切换3,🌎 全球直连]}
+  - {name: 📸 国际抖音, type: select, proxies: [🎯 总模式,♻️ 自动切换,♻️ 手动切换1,♻️ 手动切换2,♻️ 手动切换3,🌎 全球直连]}
+  - {name: 📲 电报信息, type: select, proxies: [🎯 总模式,♻️ 自动切换,♻️ 手动切换1,♻️ 手动切换2,♻️ 手动切换3,🌎 全球直连]}
+  - {name: 🎬 油管视频, type: select, proxies: [🎯 总模式,♻️ 自动切换,♻️ 手动切换1,♻️ 手动切换2,♻️ 手动切换3,🌎 全球直连]}
+  - {name: 📹 奈飞视频, type: select, proxies: [🎯 总模式,♻️ 自动切换,♻️ 手动切换1,♻️ 手动切换2,♻️ 手动切换3,🌎 全球直连]}
+  - {name: 📢 谷歌服务, type: select, proxies: [🎯 总模式,♻️ 自动切换,♻️ 手动切换1,♻️ 手动切换2,♻️ 手动切换3,🌎 全球直连]}
+  - {name: Ⓜ️ 微软服务, type: select, proxies: [🌎 全球直连,🎯 总模式,♻️ 自动切换,♻️ 手动切换1,♻️ 手动切换2,♻️ 手动切换3]}
+  - {name: 🍎 苹果服务, type: select, proxies: [🎯 总模式,♻️ 自动切换,♻️ 手动切换1,♻️ 手动切换2,♻️ 手动切换3,🌎 全球直连]}
+  - {name: 📭 网易服务, type: select, proxies: [🎯 总模式,♻️ 自动切换,♻️ 手动切换1,♻️ 手动切换2,♻️ 手动切换3,🌎 全球直连]}
+#  - {name: 🍃 应用净化, type: select, proxies: [REJECT,🌎 全球直连]}
+  - {name: 🛑 广告拦截, type: select, proxies: [REJECT,🌎 全球直连]}
+  - {name: 🐋 漏网之鱼, type: select, proxies: [🎯 总模式,🌎 全球直连]}
+  - {name: 🌎 全球直连, type: select, proxies: [DIRECT]}
+rule-providers:
+  TikTok:
+    type: http
+    behavior: classical
+    format: yaml
+    path: ./rule/TikTok.yaml
+    url: "https://raw.githubusercontent.com/MoGuangYu/rules/main/Home/TikTok.yaml"
+    interval: 86400
+  Telegram:
+    type: http
+    behavior: classical
+    format: yaml
+    path: ./rule/Telegram.yaml
+    url: "https://raw.githubusercontent.com/MoGuangYu/rules/main/Home/Telegram.yaml"
+    interval: 86400
+  Youtube:
+    type: http
+    behavior: classical
+    format: yaml
+    path: ./rule/Youtube.yaml
+    url: "https://raw.githubusercontent.com/MoGuangYu/rules/main/Home/Youtube.yaml"
+    interval: 86400
+  Google:
+    type: http
+    behavior: classical
+    format: yaml
+    path: ./rule/Google.yaml
+    url: "https://raw.githubusercontent.com/MoGuangYu/rules/main/Home/Google.yaml"
+    interval: 86400
+  Microsoft:
+    type: http
+    behavior: classical
+    format: yaml
+    path: ./rule/Microsoft.yaml
+    url: "https://raw.githubusercontent.com/MoGuangYu/rules/main/Home/Microsoft.yaml"
+    interval: 86400
+  Apple:
+    type: http
+    behavior: classical
+    format: yaml
+    path: ./rule/Apple.yaml
+    url: "https://raw.githubusercontent.com/MoGuangYu/rules/main/Home/Apple.yaml"
+    interval: 86400
+  Openai:
+    type: http
+    behavior: classical
+    format: yaml
+    path: ./rule/Openai.yaml
+    url: "https://raw.githubusercontent.com/MoGuangYu/rules/main/Home/Openai.yaml"
+    interval: 86400
+  Netease:
+    type: http
+    behavior: classical
+    format: yaml
+    path: ./rule/Netease.yaml
+    url: "https://raw.githubusercontent.com/MoGuangYu/rules/main/Home/Netease.yaml"
+    interval: 86400
+  Netflix:
+    type: http
+    behavior: classical
+    format: yaml
+    path: ./rule/Netflix.yaml
+    url: "https://raw.githubusercontent.com/MoGuangYu/rules/main/Home/Netflix.yaml"
+    interval: 86400
+rules:
+  - RULE-SET,TikTok,📸 国际抖音
+  - RULE-SET,Youtube,🎬 油管视频
+  - RULE-SET,Netflix,📹 奈飞视频
+  - RULE-SET,Google,📢 谷歌服务
+  - RULE-SET,Apple,🍎 苹果服务
+  - RULE-SET,Microsoft,Ⓜ️ 微软服务
+  - RULE-SET,Telegram,📲 电报信息
+  - RULE-SET,Openai,🤖 OpenAI
+  - RULE-SET,Netease,📭 网易服务
+  - GEOSITE,category-ads-all,🛑 广告拦截
+  - GEOSITE,CN,🌎 全球直连
+  - GEOIP,private,🌎 全球直连,no-resolve
+  - GEOIP,CN,🌎 全球直连,no-resolve
+  - MATCH,🐋 漏网之鱼
+  
+

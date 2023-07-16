@@ -1,0 +1,7 @@
+id=Surfing
+name=Surfing
+version=v6.6.8
+versionCode=1529
+author=MoGuangYu
+description=支持 REDIRECT（仅 TCP）、TPROXY（TCP + UDP）透明代理，支持 TUN（TCP + UDP），亦可 REDIRECT（TCP） + TUN（UDP） 混合模式代理。支持ipv6，Clash.Meta核心 此模块开关实时 启用/关闭 无需重启. Web后端地址：127.0.0.1:9090/ui
+updateJson=https://raw.githubusercontent.com/MoGuangYu/Surfing/main/Surfing.json
